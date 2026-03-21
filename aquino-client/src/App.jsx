@@ -9,7 +9,11 @@ function App() {
         <p>
           Name: Jhane Laurice V. Aquino <br />
           Email: jeynloris@gmail.com <br />
-          Other Personal Info: https://github.com/lauriiess/aquino-webprog
+          Course: BS Information Technology <br />
+          Other Personal Info: <br />
+          <a href="https://github.com/lauriiess/aquino-webprog" target="_blank" rel="noopener noreferrer">
+            https://github.com/lauriiess/aquino-webprog
+          </a>
         </p>
       </header>
     </div>
