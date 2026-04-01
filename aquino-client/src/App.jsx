@@ -1,23 +1,25 @@
-import React from 'react';
-import './App.css'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Layout from './components/Layout';
+import ArticlePage from './pages/ArticlePage';
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+
+const routes = [
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      { path: '', element: <HomePage /> },
+      { path: 'about', element: <AboutPage /> },
+      { path: 'articles', element: <ArticlePage /> },
+    ],
+  },
+];
+
+const router = createBrowserRouter(routes);
 
 function App() {
-  return (
-    <div className='App'>
-      <header className='App header'>
-        <h1>Welcome to React App!</h1>
-        <p>
-          Name: Jhane Laurice V. Aquino <br />
-          Email: jeynloris@gmail.com <br />
-          Course: BS Information Technology <br />
-          Other Personal Info: <br />
-          <a href="https://github.com/lauriiess/aquino-webprog" target="_blank" rel="noopener noreferrer">
-            https://github.com/lauriiess/aquino-webprog
-          </a>
-        </p>
-      </header>
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
