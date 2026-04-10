@@ -6,7 +6,7 @@ const AboutPage = () => {
       {/* Hero Section */}
       <section className="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-          <div className="rounded-3xl bg-[#F7D4BC] p-6">
+          <div className="rounded-3xl bg-[#F8C8DC] p-6">
             <img 
               src="https://d2nnykqiaju69u.cloudfront.net/photos/2023%20flower%20farms%20Philippines.jpg" 
               alt="Flower Farms"
@@ -29,7 +29,7 @@ const AboutPage = () => {
               <Button to="/" variant="primary">
                 Shop Bouquets
               </Button>
-              <Button to="/articles">Floral Care Tips</Button>
+              <Button to="/floral-care">Floral Care Tips</Button>
             </div>
           </div>
         </div>
@@ -43,25 +43,25 @@ const AboutPage = () => {
           <h2 className="mt-2 text-2xl font-semibold text-zinc-900">Rooted in Excellence</h2>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-3xl bg-[#F7D4BC] p-5">
+          <div className="rounded-3xl bg-[#F8C8DC] p-5">
             <p className="text-2xl font-bold text-zinc-900">12</p>
             <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">
               Years in Bloom
             </p>
           </div>
-          <div className="rounded-3xl bg-[#F7D4BC] p-5">
+          <div className="rounded-3xl bg-[#F8C8DC] p-5">
             <p className="text-2xl font-bold text-zinc-900">50k+</p>
             <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">
               Bouquets Delivered
             </p>
           </div>
-          <div className="rounded-3xl bg-[#F7D4BC] p-5">
+          <div className="rounded-3xl bg-[#F8C8DC] p-5">
             <p className="text-2xl font-bold text-zinc-900">100%</p>
             <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">
               Freshness Guarantee
             </p>
           </div>
-          <div className="rounded-3xl bg-[#F7D4BC] p-5">
+          <div className="rounded-3xl bg-[#F8C8DC] p-5">
             <p className="text-2xl font-bold text-zinc-900">24</p>
             <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">
               Local Growers
@@ -79,21 +79,21 @@ const AboutPage = () => {
             </p>
             <h2 className="mt-2 text-2xl font-semibold text-zinc-900">Crafting Moments</h2>
             <div className="mt-6 space-y-4">
-              <article className="rounded-3xl bg-[#F7D4BC] p-5">
+              <article className="rounded-3xl bg-[#F8C8DC] p-5">
                 <h3 className="text-lg font-semibold text-zinc-900">Custom Arrangements</h3>
                 <p className="mt-3 text-sm leading-6 text-zinc-600">
                   Work with our lead florists to create a unique piece that perfectly captures 
                   the emotion of your special occasion.
                 </p>
               </article>
-              <article className="rounded-3xl bg-[#F7D4BC] p-5">
+              <article className="rounded-3xl bg-[#F8C8DC] p-5">
                 <h3 className="text-lg font-semibold text-zinc-900">Wedding Florals</h3>
                 <p className="mt-3 text-sm leading-6 text-zinc-600">
                   From bridal bouquets to venue installations, we bring your dream wedding 
                   vision to life with stunning floral displays.
                 </p>
               </article>
-              <article className="rounded-3xl bg-[#F7D4BC] p-5">
+              <article className="rounded-3xl bg-[#F8C8DC] p-5">
                 <h3 className="text-lg font-semibold text-zinc-900">Subscription Box</h3>
                 <p className="mt-3 text-sm leading-6 text-zinc-600">
                   Keep your home or office vibrant with our weekly or monthly seasonal flower 
@@ -102,7 +102,7 @@ const AboutPage = () => {
               </article>
             </div>
           </div>
-          <div className="rounded-3xl bg-[#F7D4BC] p-5">
+          <div className="rounded-3xl bg-[#F8C8DC] p-5">
             <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-500">
               Seasonal Gallery
             </p>
@@ -128,7 +128,7 @@ const AboutPage = () => {
                 className="aspect-square rounded-[1.25rem] object-cover"
               />
             </div>
-            <Button className="mt-5 w-full">View Full Gallery</Button>
+            <Button to="/view" className="mt-5 w-full">View Full Gallery</Button>
           </div>
         </div>
       </section>

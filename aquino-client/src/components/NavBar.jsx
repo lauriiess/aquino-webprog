@@ -10,13 +10,13 @@ const navLinkClassName = ({ isActive }) =>
   [
     'rounded-full border-2 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] transition',
     isActive
-      ? 'border-[#846B8A] bg-[#846B8A] text-[#FAE3E3]'
-      : 'border-transparent text-[#846B8A] hover:border-[#C98BB9] hover:bg-[#FAE3E3] hover:text-[#846B8A]',
+      ? 'border-[#8E66B2] bg-[#8E66B2] text-[#FAE3E3]'
+      : 'border-transparent text-[#8E66B2] hover:border-[#C98BB9] hover:bg-[#FAE3E3] hover:text-[#8E66B2]',
   ].join(' ');
 
 const NavBar = () => {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 bg-[#F7D4BC]/95 backdrop-blur">
+    <header className="fixed inset-x-0 top-0 z-50 bg-[#FFDBEA]/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
         
         <NavLink to="/" className="relative flex items-center gap-3">
@@ -29,7 +29,7 @@ const NavBar = () => {
           </div>
           
           <div className="pl-2">
-            <p className="text-xl font-bold text-[#846B8A]">Blossom & Vine</p>
+            <p className="text-xl font-bold text-[#8E66B2]">Blossom & Vine</p>
           </div>
         </NavLink>
 
