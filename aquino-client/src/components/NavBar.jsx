@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 const links = [
   { label: 'Home', to: '/' },
@@ -44,6 +44,13 @@ const NavBar = () => {
               {link.label}
             </NavLink>
           ))}
+
+          <Link
+          to="/auth/signin"
+          className="ml-5 rounded-full px-5 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#8E66B2] transition hover:bg-[#FAE3E3]"
+        >
+          Login
+        </Link>
         </nav>
       </div>
     </header>
