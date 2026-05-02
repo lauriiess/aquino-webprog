@@ -1,4 +1,4 @@
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 const links = [
   { label: 'Home', to: '/' },
@@ -17,23 +17,24 @@ const navLinkClassName = ({ isActive }) =>
 const NavBar = () => {
   return (
     <header className="fixed inset-x-0 top-0 z-50 bg-[#FFDBEA]/95 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-        
-        <NavLink to="/" className="relative flex items-center gap-3">
-          <div className="relative flex h-10 w-12 items-center justify-center">
-             <img 
+      <div className="mx-auto flex max-w-6xl items-center px-4 py-4 sm:px-6 lg:px-8">
+
+        <div className="flex flex-1 justify-start">
+          <NavLink to="/" className="relative flex items-center gap-3">
+            <div className="relative flex h-10 w-12 items-center justify-center">
+              <img 
                 src="/src/assets/logo.png" 
                 alt="Logo" 
                 className="absolute left-0 top-1/2 h-16 w-auto -translate-y-1/2 max-w-none" 
-             />
-          </div>
-          
-          <div className="pl-2">
-            <p className="text-xl font-bold text-[#8E66B2]">Blossom & Vine</p>
-          </div>
-        </NavLink>
+              />
+            </div>
+            <div className="pl-2">
+              <p className="text-xl font-bold text-[#8E66B2]">Blossom & Vine</p>
+            </div>
+          </NavLink>
+        </div>
 
-        <nav className="hidden items-center gap-2 md:flex">
+        <nav className="hidden md:flex flex-1 justify-center items-center gap-2">
           {links.map((link) => (
             <NavLink
               key={link.to}
@@ -44,14 +45,17 @@ const NavBar = () => {
               {link.label}
             </NavLink>
           ))}
-
-          <Link
-          to="/auth/signin"
-          className="ml-5 rounded-full px-5 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#8E66B2] transition hover:bg-[#FAE3E3]"
-        >
-          Login
-        </Link>
         </nav>
+
+        <div className="flex flex-1 justify-end">
+          <NavLink
+            to="/auth/signin"
+            className={navLinkClassName}
+          >
+            Login
+          </NavLink>
+        </div>
+
       </div>
     </header>
   );
