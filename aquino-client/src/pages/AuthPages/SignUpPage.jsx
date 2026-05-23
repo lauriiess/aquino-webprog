@@ -1,91 +1,199 @@
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
+import { createUser } from '../../services/UserService';
 
-const inputClasses = 'mt-2 w-full rounded-xl border border-zinc-300 bg-zinc-100 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-zinc-900 focus:bg-zinc-50';
-const actionButtonClassName = 'w-full rounded-xl py-3 text-[11px] tracking-[0.2em]';
+const inputClasses =
+  'mt-2 w-full rounded-xl border border-zinc-300 bg-zinc-100 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-zinc-900 focus:bg-zinc-50';
+
+const actionButtonClassName =
+  'w-full rounded-xl py-3 text-[11px] tracking-[0.2em]';
 
 const SignUpPage = () => {
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    username: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    address: '',
+    contactNumber: '',
+    gender: '',
+    age: '',
+  });
+
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setError('');
+    setSuccess('');
+    setIsLoading(true);
+
+    try {
+      await createUser(formData);
+
+      setSuccess('Account created successfully!');
+
+      setTimeout(() => {
+        navigate('/auth/signin');
+      }, 1200);
+    } catch (err) {
+      const message =
+        err.response?.data?.message ||
+        'Registration failed. Please try again.';
+
+      setError(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
-      <h1 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">Sign Up</h1>
-      <p className="mt-3 text-sm leading-6 text-zinc-600">
-        Create an account to start your floral journey with us and make every occasion a bit more beautiful.
-      </p>
+      <h1 className="text-3xl font-bold text-zinc-900">Sign Up</h1>
 
-      <form className="mt-8 space-y-5">
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div>
-            <label htmlFor="first-name" className="text-sm font-medium text-zinc-700">
-              First Name
-            </label>
-            <input
-              id="first-name"
-              type="text"
-              placeholder="Placeholder"
-              autoComplete="given-name"
-              className={inputClasses}
-            />
-          </div>
-          <div>
-            <label htmlFor="last-name" className="text-sm font-medium text-zinc-700">
-              Last Name
-            </label>
-            <input
-              id="last-name"
-              type="text"
-              placeholder="Placeholder"
-              autoComplete="family-name"
-              className={inputClasses}
-            />
-          </div>
+      {error && (
+        <div className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-600">
+          {error}
         </div>
+      )}
 
+      {success && (
+        <div className="mt-4 rounded-xl bg-green-50 p-3 text-sm text-green-600">
+          {success}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+
+        {/* Username */}
         <div>
-          <label htmlFor="signup-email" className="text-sm font-medium text-zinc-700">
-            Email
+          <label className="text-sm font-medium text-zinc-700">
+            Username
           </label>
           <input
-            id="signup-email"
-            type="email"
-            placeholder="Placeholder"
-            autoComplete="email"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
             className={inputClasses}
+            required
           />
         </div>
 
-        <div>
-          <label htmlFor="signup-password" className="text-sm font-medium text-zinc-700">
-            Password
-          </label>
+        {/* Name */}
+        <div className="grid gap-4 sm:grid-cols-2">
           <input
-            id="signup-password"
-            type="password"
-            placeholder="Placeholder"
-            autoComplete="new-password"
+            name="firstName"
+            placeholder="First Name"
+            value={formData.firstName}
+            onChange={handleChange}
             className={inputClasses}
+            required
           />
-          <p className="mt-2 text-xs leading-5 text-zinc-500">
-            Use a secure password with letters, numbers, and symbols.
-          </p>
+          <input
+            name="lastName"
+            placeholder="Last Name"
+            value={formData.lastName}
+            onChange={handleChange}
+            className={inputClasses}
+            required
+          />
         </div>
 
-        <Button type="submit" variant="primary" className={actionButtonClassName}>
-          Create Account
+        {/* Email */}
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          className={inputClasses}
+          required
+        />
+
+        {/* Password */}
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          className={inputClasses}
+          required
+        />
+
+        {/* Address */}
+        <input
+          name="address"
+          placeholder="Address"
+          value={formData.address}
+          onChange={handleChange}
+          className={inputClasses}
+          required
+        />
+
+        {/* Contact Number */}
+        <input
+          name="contactNumber"
+          placeholder="Contact Number"
+          value={formData.contactNumber}
+          onChange={handleChange}
+          className={inputClasses}
+          required
+        />
+
+        {/* Gender */}
+        <select
+          name="gender"
+          value={formData.gender}
+          onChange={handleChange}
+          className={inputClasses}
+          required
+        >
+          <option value="">Select Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+
+        {/* Age */}
+        <input
+          name="age"
+          type="number"
+          placeholder="Age"
+          value={formData.age}
+          onChange={handleChange}
+          className={inputClasses}
+          required
+        />
+
+        <Button
+          type="submit"
+          variant="primary"
+          className={actionButtonClassName}
+          disabled={isLoading}
+        >
+          {isLoading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}
         </Button>
 
-        <div className="grid gap-3 pt-2 sm:grid-cols-2">
-          <Button type="button" variant="secondary" className={actionButtonClassName}>
-            Sign Up with Google
-          </Button>
-          <Button type="button" variant="secondary" className={actionButtonClassName}>
-            Sign Up with Apple
-          </Button>
-        </div>
       </form>
 
-      <div className="mt-8 border-t border-zinc-200 pt-6 text-sm text-zinc-600">
+      <div className="mt-6 text-sm text-zinc-600">
         Already have an account?{' '}
-        <Link to="/auth/signin" className="font-semibold text-zinc-900 transition hover:text-zinc-600">
+        <Link to="/auth/signin" className="font-semibold text-zinc-900">
           Log In
         </Link>
       </div>

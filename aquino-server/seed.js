@@ -1,0 +1,88 @@
+require("dotenv").config();
+const mongoose = require("mongoose");
+const Article = require("./models/Article");
+
+const articles = [
+  {
+    id: 1,
+    slug: "longevity-secrets",
+    title: "Longevity Secrets",
+    preview:
+      "Discover simple techniques that help fresh flower arrangements stay vibrant and beautiful for longer.",
+    image:
+      "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&q=80&w=600",
+    paragraphs: [
+      "Fresh flowers can last much longer when cared for properly. Small habits like trimming stems and changing water regularly help arrangements stay healthy and colorful.",
+      "Always cut flower stems at a 45-degree angle before placing them in water. This improves water absorption and keeps blooms hydrated throughout the day.",
+      "Replacing the vase water every two days helps prevent bacteria from growing. Clean water keeps flowers fresher and extends the beauty of your arrangements."
+    ],
+    status: "enabled",
+  },
+  {
+    id: 2,
+    slug: "color-theory-in-blooms",
+    title: "Color Theory in Blooms",
+    preview:
+      "Learn how complementary colors and balanced palettes create more striking floral arrangements.",
+    image:
+      "https://bouqs.com/blog/wp-content/uploads/2023/06/Untitled-design-1-1080x608.jpg",
+    paragraphs: [
+      "Color plays a major role in floral design because it affects the mood and overall appearance of a bouquet. Choosing the right combinations creates harmony and balance.",
+      "Using complementary colors such as yellow and purple can make arrangements look more vibrant and eye-catching. Contrasting shades naturally draw attention.",
+      "Monochromatic floral arrangements use different shades of the same color to create a clean and elegant style that feels modern and sophisticated."
+    ],
+    status: "enabled",
+  },
+  {
+    id: 3,
+    slug: "springs-best-arrivals",
+    title: "Spring's Best Arrivals",
+    preview:
+      "Explore some of the most beautiful seasonal flowers that bloom during springtime.",
+    image:
+      "https://bouqs.com/blog/wp-content/uploads/2022/03/shutterstock_260182148-min.jpg",
+    paragraphs: [
+      "Spring is one of the most colorful seasons for flowers, bringing fresh blooms and vibrant garden landscapes after colder months.",
+      "Tulips and daffodils are classic spring flowers known for their bright colors and cheerful appearance. They are popular choices for gardens and bouquets.",
+      "Ranunculus flowers are admired for their layered petals and rose-like shape, making them perfect for elegant floral arrangements and seasonal displays."
+    ],
+    status: "enabled",
+  },
+  {
+    id: 4,
+    slug: "sourcing-sustainably",
+    title: "Sourcing Sustainably",
+    preview:
+      "See how sustainable flower sourcing supports fresher blooms and a healthier environment.",
+    image:
+      "https://gilmour.com/wp-content/uploads/2019/06/Planting-Spring-Flowers.jpg",
+    paragraphs: [
+      "Sustainable flower sourcing focuses on supporting environmentally friendly farming practices while reducing transportation impact and waste.",
+      "Partnering with local farms allows flowers to arrive fresher because they travel shorter distances before reaching customers.",
+      "Organic farming practices help protect soil quality, reduce harmful chemicals, and support pollinators like bees and butterflies that are essential for healthy ecosystems."
+    ],
+    status: "enabled",
+  },
+];
+
+const seedDatabase = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("MongoDB Connected");
+
+    // Clear existing articles
+    await Article.deleteMany({});
+    console.log("Cleared existing articles");
+
+    // Insert new articles
+    const result = await Article.insertMany(articles);
+    console.log(`${result.length} articles seeded successfully`);
+
+    process.exit(0);
+  } catch (error) {
+    console.error("Error seeding database:", error);
+    process.exit(1);
+  }
+};
+
+seedDatabase();
