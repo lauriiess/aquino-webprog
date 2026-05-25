@@ -27,12 +27,11 @@ const corsOptions = {
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
     preflightContinue: false,
-    optionsSuccessStatus: 204, // For legacy browser support
+    optionsSuccessStatus: 204, 
 };
 app.options("", cors(corsOptions)); // Pre-flight request for all routes
 app.use(cors(corsOptions));
 
-// Curb CORS Error by adding a header here
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader(

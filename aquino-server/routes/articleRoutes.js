@@ -9,7 +9,6 @@ const {
 
 const router = express.Router();
 
-// Route mappings for RESTful API execution
 router.route('/')
     .get(getArticles)
     .post(createArticle);

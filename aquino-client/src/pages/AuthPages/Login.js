@@ -32,7 +32,6 @@ const Login = () => {
       localStorage.setItem('role', role);
       localStorage.setItem('firstName', firstName);
 
-      // Redirect based on user type
       if (role === 'admin') {
         navigate('/admin/dashboard');
       } else if (role === 'editor') {

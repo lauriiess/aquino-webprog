@@ -36,7 +36,6 @@ const createArticle = async (req, res) => {
     try {
         const { id, slug, title, paragraphs, preview, image, status } = req.body;
 
-        // Check if slug is already taken
         const slugExists = await Article.findOne({ slug });
         if (slugExists) {
             return res.status(400).json({ message: 'An article with this slug already exists.' });
@@ -85,7 +84,6 @@ const updateArticle = async (req, res) => {
             article.id = Number(id);
         }
 
-        // Check if new slug conflicts with an existing article
         if (slug && slug !== article.slug) {
             const slugExists = await Article.findOne({ slug, _id: { $ne: article._id } });
             if (slugExists) {

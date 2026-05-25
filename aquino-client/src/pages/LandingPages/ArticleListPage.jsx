@@ -21,7 +21,6 @@ const ArticleListPage = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Only show enabled articles
   const visibleArticles = articles.filter(
     (article) =>
       (article.status || 'enabled') === 'enabled'
