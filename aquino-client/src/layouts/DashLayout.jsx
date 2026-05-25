@@ -165,6 +165,17 @@ const getPageTitle = (pathname) => {
 const DashLayout = () => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+
+  const [role, setRole] = useState(localStorage.getItem('role'));
+
+  const visibleNavItems = dashboardNavItems.filter((item) => {
+    if (role === 'editor' && item.label === 'Users') {
+      return false;
+    }
+
+    return true;
+  });
+
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
   const navigate = useNavigate();
@@ -178,8 +189,14 @@ const DashLayout = () => {
   };
 
   const handleLogout = () => {
-    navigate("/");
-  };
+  localStorage.removeItem('token');
+  localStorage.removeItem('role');
+  localStorage.removeItem('firstName');
+
+  setRole(null);
+
+  navigate('/auth/signin');
+};
 
   const hoverColor = "rgba(107, 132, 89, 0.15)";   
   const activeColor = "rgba(107, 132, 89, 0.35)"; 
@@ -233,41 +250,41 @@ const DashLayout = () => {
         <Divider />
         
         <List>
-          {dashboardNavItems.map(({ label, to, icon: Icon }) => (
+          {visibleNavItems.map(({ label, to, icon: Icon }) => (
             <ListItem key={to} disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 component={Link}
                 to={to}
                 selected={location.pathname === to}
                 sx={{
-  minHeight: 48,
-  px: 2.5,
-  justifyContent: open ? "initial" : "center",
-  borderRadius: 2,
-  mx: 1,
-  my: 0.5,
-  transition: "all 0.25s ease",
+                  minHeight: 48,
+                  px: 2.5,
+                  justifyContent: open ? "initial" : "center",
+                  borderRadius: 2,
+                  mx: 1,
+                  my: 0.5,
+                  transition: "all 0.25s ease",
 
-  '&:hover': {
-    backgroundColor: hoverColor,
-    transform: "translateX(4px)",
-  },
+                  '&:hover': {
+                    backgroundColor: hoverColor,
+                    transform: "translateX(4px)",
+                  },
 
-  '&.Mui-selected': {
-    backgroundColor: activeColor,
-    color: "#6b8459",
-    transform: "translateX(6px) scale(1.02)",
-    boxShadow: "0 4px 12px rgba(107, 132, 89, 0.15)",
+                  '&.Mui-selected': {
+                    backgroundColor: activeColor,
+                    color: "#6b8459",
+                    transform: "translateX(6px) scale(1.02)",
+                    boxShadow: "0 4px 12px rgba(107, 132, 89, 0.15)",
 
-    '& .MuiListItemIcon-root': {
-      color: "#6b8459",
-    },
+                    '& .MuiListItemIcon-root': {
+                      color: "#6b8459",
+                    },
 
-    '&:hover': {
-      backgroundColor: activeColor,
-    },
-  },
-}}
+                    '&:hover': {
+                      backgroundColor: activeColor,
+                    },
+                  },
+                }}
               >
                 <ListItemIcon
                   sx={{

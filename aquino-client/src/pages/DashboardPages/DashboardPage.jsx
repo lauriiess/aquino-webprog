@@ -51,15 +51,15 @@ const columns = [
 ];
 
 const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Ambretta', role: 'Customer', age: 14, status: 'Active' },
-  { id: 2, lastName: 'Belladona', firstName: 'Blossom', role: 'Florist', age: 31, status: 'Inactive' },
-  { id: 3, lastName: 'Smith', firstName: 'Chrysantha', role: 'Customer', age: 31, status: 'Active' },
-  { id: 4, lastName: 'Williams', firstName: 'Erica', role: 'Customer', age: 11, status: 'Active' },
-  { id: 5, lastName: 'Baker', firstName: 'Dhalia', role: 'Staff', age: 30, status: 'Inactive' },
-  { id: 6, lastName: 'Lee', firstName: 'Daisy', role: 'Florist', age: 23, status: 'Active' },
-  { id: 7, lastName: 'Miller', firstName: 'Iris', role: 'Customer', age: 44, status: 'Active' },
-  { id: 8, lastName: 'Lopez', firstName: 'John', role: 'Delivery Staff', age: 26, status: 'Active' },
-  { id: 9, lastName: 'Martin', firstName: 'Peony', role: 'Customer', age: 65, status: 'Inactive' },
+  { id: 1, lastName: 'Snow', firstName: 'Ambretta', role: 'Admin', age: 14, status: 'Active' },
+  { id: 2, lastName: 'Belladona', firstName: 'Blossom', role: 'Viewer', age: 31, status: 'Inactive' },
+  { id: 3, lastName: 'Smith', firstName: 'Chrysantha', role: 'Editor', age: 31, status: 'Active' },
+  { id: 4, lastName: 'Williams', firstName: 'Erica', role: 'Viewer', age: 11, status: 'Active' },
+  { id: 5, lastName: 'Baker', firstName: 'Dhalia', role: 'Editor', age: 30, status: 'Inactive' },
+  { id: 6, lastName: 'Lee', firstName: 'Daisy', role: 'Editor', age: 23, status: 'Active' },
+  { id: 7, lastName: 'Miller', firstName: 'Iris', role: 'Viewer', age: 44, status: 'Active' },
+  { id: 8, lastName: 'Lopez', firstName: 'John', role: 'Viewer', age: 26, status: 'Active' },
+  { id: 9, lastName: 'Martin', firstName: 'Peony', role: 'Viewer', age: 65, status: 'Inactive' },
 ];
 
 function DashboardPage() {

@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Chip,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -27,7 +28,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import axios from 'axios';
 
-// ---------- Helper: API URL ----------
 const getApiUrl = () => {
   try {
     const meta = Function('return import.meta')();
@@ -37,20 +37,17 @@ const getApiUrl = () => {
   }
 };
 
-// ---------- Helper: Auth headers ----------
 const getHeaders = () => {
   const token = localStorage.getItem('token');
   return token ? { headers: { Authorization: `Bearer ${token}` } } : {};
 };
 
-// ---------- Normalize paragraphs from multiline text ----------
 const normalizeParagraphInput = (value) =>
   value
     .split('\n')
     .map((p) => p.trim())
     .filter(Boolean);
 
-// ---------- Initial blank form ----------
 const blankForm = {
   id: '',
   slug: '',
@@ -65,32 +62,30 @@ const DashArticleListPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // State
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Filters & search
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
-  // Modal (add/edit)
-  const [modal, setModal] = useState({ open: false, id: null }); // id = article._id when editing
+  const [modal, setModal] = useState({ open: false, id: null });
   const [form, setForm] = useState(blankForm);
   const [formErrors, setFormErrors] = useState({});
 
-  // ---------- Data fetching ----------
   const loadArticles = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
+
       const { data } = await axios.get(
         `${getApiUrl()}/articles?includeDisabled=true`,
         getHeaders()
       );
+
       setArticles(data.articles || []);
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching articles:', err);
       setError('Unable to load articles from the database.');
     } finally {
       setLoading(false);
@@ -101,36 +96,38 @@ const DashArticleListPage = () => {
     loadArticles();
   }, [loadArticles]);
 
-  // ---------- Helper: next numeric ID suggestion ----------
   const nextNumericId = useMemo(() => {
     const numericIds = articles
-      .map((a) => Number(a.id))
-      .filter((v) => Number.isFinite(v));
+      .map((article) => Number(article.id))
+      .filter((value) => Number.isFinite(value));
+
     return numericIds.length ? Math.max(...numericIds) + 1 : 1;
   }, [articles]);
 
-  // ---------- Modal handlers ----------
   const openModal = (article = null) => {
     if (article) {
-      // Edit mode
       setForm({
         id: article.id ?? '',
         slug: article.slug ?? '',
         title: article.title ?? '',
         preview: article.preview ?? '',
         image: article.image ?? '',
-        paragraphs: Array.isArray(article.paragraphs) ? article.paragraphs : [],
+        paragraphs: Array.isArray(article.paragraphs)
+          ? article.paragraphs
+          : [],
         status: article.status ?? 'enabled',
       });
+
       setModal({ open: true, id: article._id });
     } else {
-      // Add mode
       setForm({
         ...blankForm,
         id: String(nextNumericId),
       });
+
       setModal({ open: true, id: null });
     }
+
     setFormErrors({});
   };
 
@@ -140,37 +137,55 @@ const DashArticleListPage = () => {
     setFormErrors({});
   };
 
-  // ---------- Form field change ----------
-  const handleFormChange = ({ target: { name, value, checked, type } }) => {
-    let newValue = type === 'checkbox' ? checked : value;
-    // For paragraphs field (multiline) -> keep as raw string in form, but we'll normalize on submit
-    if (name === 'paragraphs') {
-      newValue = value; // keep as string for editing
-    }
-    setForm((prev) => ({ ...prev, [name]: newValue }));
+  const handleFormChange = ({ target: { name, value } }) => {
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
     if (formErrors[name]) {
-      setFormErrors((prev) => ({ ...prev, [name]: '' }));
+      setFormErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }));
     }
   };
 
-  // ---------- Validation ----------
   const validateForm = () => {
     const errors = {};
-    if (!form.title.trim()) errors.title = 'Title is required.';
-    if (!form.slug.trim()) errors.slug = 'Slug is required.';
-    if (!form.preview.trim()) errors.preview = 'Preview is required.';
-    if (!form.id.toString().trim()) errors.id = 'ID is required.';
-    // Check unique numeric id? We'll check against existing articles (excluding current if editing)
+
+    if (!String(form.id).trim()) {
+      errors.id = 'ID is required.';
+    }
+
+    if (!form.slug.trim()) {
+      errors.slug = 'Slug is required.';
+    }
+
+    if (!form.title.trim()) {
+      errors.title = 'Title is required.';
+    }
+
+    if (!form.preview.trim()) {
+      errors.preview = 'Preview is required.';
+    }
+
     const existing = articles.find(
-      (a) => a.id === Number(form.id) && a._id !== modal.id
+      (article) =>
+        Number(article.id) === Number(form.id) &&
+        article._id !== modal.id
     );
-    if (existing) errors.id = 'This ID is already used by another article.';
+
+    if (existing) {
+      errors.id = 'This ID is already used by another article.';
+    }
+
     return errors;
   };
 
-  // ---------- Save (Create or Update) ----------
   const handleSave = async () => {
     const errors = validateForm();
+
     if (Object.keys(errors).length) {
       setFormErrors(errors);
       return;
@@ -190,73 +205,113 @@ const DashArticleListPage = () => {
 
     try {
       if (modal.id) {
-        // Update existing
-        await axios.put(`${getApiUrl()}/articles/${modal.id}`, payload, getHeaders());
+        await axios.put(
+          `${getApiUrl()}/articles/${modal.id}`,
+          payload,
+          getHeaders()
+        );
       } else {
-        // Create new
-        await axios.post(`${getApiUrl()}/articles`, payload, getHeaders());
+        await axios.post(
+          `${getApiUrl()}/articles`,
+          payload,
+          getHeaders()
+        );
       }
+
       await loadArticles();
       closeModal();
     } catch (err) {
-      console.error(err);
-      setFormErrors({ submit: err.response?.data?.message || 'Save failed. Try again.' });
+      console.error('Error saving article:', err);
+
+      setFormErrors({
+        submit:
+          err.response?.data?.message ||
+          'Save failed. Try again.',
+      });
     }
   };
 
-  // ---------- Enable/Disable toggle ----------
   const handleToggleStatus = async (article) => {
-    const newStatus = article.status === 'enabled' ? 'disabled' : 'enabled';
+    const nextStatus =
+      article.status === 'enabled' ? 'disabled' : 'enabled';
+
     try {
       await axios.put(
         `${getApiUrl()}/articles/${article._id}`,
-        { status: newStatus },
+        { status: nextStatus },
         getHeaders()
       );
+
       await loadArticles();
     } catch (err) {
-      console.error(err);
+      console.error('Error updating article status:', err);
       setError('Failed to update article status.');
     }
   };
 
-  // ---------- Delete article ----------
   const handleDelete = async (id) => {
-    if (window.confirm('Permanently delete this article? This action cannot be undone.')) {
+    if (
+      window.confirm(
+        'Permanently delete this article? This action cannot be undone.'
+      )
+    ) {
       try {
-        await axios.delete(`${getApiUrl()}/articles/${id}`, getHeaders());
+        await axios.delete(
+          `${getApiUrl()}/articles/${id}`,
+          getHeaders()
+        );
+
         await loadArticles();
       } catch (err) {
-        console.error(err);
+        console.error('Error deleting article:', err);
         setError('Failed to delete article.');
       }
     }
   };
 
-  // ---------- Filter articles ----------
   const filteredArticles = articles.filter((article) => {
     const searchLower = search.toLowerCase();
-    const matchesSearch =
-      String(article.id).includes(searchLower) ||
-      article.slug.toLowerCase().includes(searchLower) ||
-      article.title.toLowerCase().includes(searchLower) ||
-      article.preview.toLowerCase().includes(searchLower);
 
-    const matchesStatus = statusFilter === '' || article.status === statusFilter;
+    const paragraphCount = Array.isArray(article.paragraphs)
+      ? article.paragraphs.length
+      : 0;
+
+    const matchesSearch =
+      String(article.id || '').toLowerCase().includes(searchLower) ||
+      String(article.slug || '').toLowerCase().includes(searchLower) ||
+      String(article.title || '').toLowerCase().includes(searchLower) ||
+      String(article.preview || '').toLowerCase().includes(searchLower) ||
+      String(paragraphCount).toLowerCase().includes(searchLower) ||
+      String(article.status || '').toLowerCase().includes(searchLower);
+
+    const matchesStatus =
+      statusFilter === '' || article.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
 
-  // ---------- DataGrid Columns ----------
   const columns = [
     { field: 'id', headerName: 'ID', width: 80 },
-    { field: 'slug', headerName: 'Slug', minWidth: 150, flex: 1 },
-    { field: 'title', headerName: 'Title', minWidth: 180, flex: 1.2 },
+    {
+      field: 'slug',
+      headerName: 'Slug',
+      minWidth: 150,
+      flex: 1,
+    },
+    {
+      field: 'title',
+      headerName: 'Title',
+      minWidth: 180,
+      flex: 1.2,
+    },
     {
       field: 'paragraphsCount',
       headerName: 'Paragraphs',
-      width: 110,
-      valueGetter: (_, row) => (row.paragraphs?.length ?? 0),
+      width: 120,
+      valueGetter: (_, row) =>
+        Array.isArray(row.paragraphs)
+          ? row.paragraphs.length
+          : 0,
     },
     {
       field: 'preview',
@@ -272,7 +327,7 @@ const DashArticleListPage = () => {
     {
       field: 'status',
       headerName: 'Status',
-      width: 120,
+      width: 130,
       renderCell: ({ row }) => (
         <Chip
           label={row.status === 'enabled' ? 'Enabled' : 'Disabled'}
@@ -298,6 +353,7 @@ const DashArticleListPage = () => {
           >
             Edit
           </Button>
+
           <Button
             size="small"
             variant="contained"
@@ -306,6 +362,7 @@ const DashArticleListPage = () => {
           >
             {row.status === 'enabled' ? 'Disable' : 'Enable'}
           </Button>
+
           <IconButton
             color="error"
             size="small"
@@ -320,7 +377,6 @@ const DashArticleListPage = () => {
 
   return (
     <Box sx={{ width: '100%', minWidth: 0 }}>
-      {/* Header + Add Button */}
       <Box
         sx={{
           mb: 3,
@@ -331,7 +387,10 @@ const DashArticleListPage = () => {
           flexWrap: 'wrap',
         }}
       >
-        <Typography variant="h4">Articles</Typography>
+        <Typography variant="h4">
+          Articles
+        </Typography>
+
         <Button
           variant="contained"
           startIcon={<AddCircleIcon />}
@@ -342,7 +401,6 @@ const DashArticleListPage = () => {
         </Button>
       </Box>
 
-      {/* Filters: Search + Status */}
       <Box
         sx={{
           mb: 2,
@@ -353,7 +411,7 @@ const DashArticleListPage = () => {
         }}
       >
         <TextField
-          placeholder="Search articles by ID, slug, title, preview..."
+          placeholder="Search articles by ID, name, title, preview..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           size="small"
@@ -381,21 +439,28 @@ const DashArticleListPage = () => {
         </TextField>
       </Box>
 
-      {/* Error Alert */}
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
 
-      {/* DataGrid */}
       <Paper sx={{ p: { xs: 1.5, sm: 2 }, minWidth: 0, overflow: 'hidden' }}>
         {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 2,
+              py: 4,
+            }}
+          >
+            <CircularProgress size={20} />
             <Typography>Loading articles...</Typography>
           </Box>
         ) : filteredArticles.length ? (
-          <Box sx={{ height: { xs: 400, sm: 520 }, width: '100%', minWidth: 0 }}>
+          <Box sx={{ height: { xs: 400, sm: 520 }, width: '100%' }}>
             <DataGrid
               rows={filteredArticles}
               columns={columns}
@@ -403,7 +468,12 @@ const DashArticleListPage = () => {
               disableRowSelectionOnClick
               pageSizeOptions={[5, 10, 25]}
               initialState={{
-                pagination: { paginationModel: { pageSize: 5, page: 0 } },
+                pagination: {
+                  paginationModel: {
+                    pageSize: 5,
+                    page: 0,
+                  },
+                },
               }}
               sx={{
                 minWidth: 0,
@@ -420,7 +490,6 @@ const DashArticleListPage = () => {
         )}
       </Paper>
 
-      {/* Add/Edit Dialog */}
       <Dialog
         open={modal.open}
         onClose={closeModal}
@@ -428,13 +497,22 @@ const DashArticleListPage = () => {
         fullScreen={isMobile}
         maxWidth="md"
       >
-        <Box component="form" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
-          <DialogTitle>{modal.id ? 'Edit Article' : 'Add Article'}</DialogTitle>
+        <Box
+          component="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSave();
+          }}
+        >
+          <DialogTitle>
+            {modal.id ? 'Edit Article' : 'Add Article'}
+          </DialogTitle>
+
           <DialogContent dividers sx={{ px: { xs: 2, sm: 3 } }}>
             <Stack spacing={2} sx={{ pt: 1 }}>
               <TextField
                 name="id"
-                label="ID (numeric)"
+                label="ID"
                 type="number"
                 value={form.id}
                 onChange={handleFormChange}
@@ -443,9 +521,10 @@ const DashArticleListPage = () => {
                 fullWidth
                 required
               />
+
               <TextField
                 name="slug"
-                label="Slug (URL identifier)"
+                label="Name"
                 value={form.slug}
                 onChange={handleFormChange}
                 error={!!formErrors.slug}
@@ -453,6 +532,7 @@ const DashArticleListPage = () => {
                 fullWidth
                 required
               />
+
               <TextField
                 name="title"
                 label="Title"
@@ -463,9 +543,10 @@ const DashArticleListPage = () => {
                 fullWidth
                 required
               />
+
               <TextField
                 name="preview"
-                label="Preview (short description)"
+                label="Preview"
                 multiline
                 rows={2}
                 value={form.preview}
@@ -475,6 +556,7 @@ const DashArticleListPage = () => {
                 fullWidth
                 required
               />
+
               <TextField
                 name="image"
                 label="Image URL"
@@ -482,6 +564,7 @@ const DashArticleListPage = () => {
                 onChange={handleFormChange}
                 fullWidth
               />
+
               <TextField
                 name="paragraphs"
                 label="Paragraphs (one per line)"
@@ -496,6 +579,7 @@ const DashArticleListPage = () => {
                 helperText="Each line becomes a separate paragraph."
                 fullWidth
               />
+
               <FormControlLabel
                 control={
                   <Switch
@@ -504,20 +588,33 @@ const DashArticleListPage = () => {
                     onChange={(e) =>
                       setForm((prev) => ({
                         ...prev,
-                        status: e.target.checked ? 'enabled' : 'disabled',
+                        status: e.target.checked
+                          ? 'enabled'
+                          : 'disabled',
                       }))
                     }
                   />
                 }
-                label={form.status === 'enabled' ? 'Status: Enabled' : 'Status: Disabled'}
+                label={
+                  form.status === 'enabled'
+                    ? 'Status: Enabled'
+                    : 'Status: Disabled'
+                }
               />
+
               {formErrors.submit && (
-                <Alert severity="error">{formErrors.submit}</Alert>
+                <Alert severity="error">
+                  {formErrors.submit}
+                </Alert>
               )}
             </Stack>
           </DialogContent>
+
           <DialogActions sx={{ px: 3, py: 2 }}>
-            <Button onClick={closeModal}>Cancel</Button>
+            <Button onClick={closeModal}>
+              Cancel
+            </Button>
+
             <Button type="submit" variant="contained">
               {modal.id ? 'Update Article' : 'Save Article'}
             </Button>

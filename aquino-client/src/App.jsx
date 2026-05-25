@@ -16,6 +16,19 @@ import DashboardPage from './pages/DashboardPages/DashboardPage';
 import ReportsPage from './pages/DashboardPages/ReportsPage';
 import UsersPage from './pages/DashboardPages/UsersPage';
 
+
+import { Navigate } from 'react-router-dom';
+
+const AdminOnly = ({ children }) => {
+  const role = localStorage.getItem('role');
+
+  if (role !== 'admin') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
+
 const routes = [
   {
     path: '/',
@@ -70,7 +83,11 @@ const routes = [
       },
       {
         path: "users",
-        element: <UsersPage />,
+        element: (
+          <AdminOnly>
+            <UsersPage />
+          </AdminOnly>
+        ),
       },
       {
         path: "articles",

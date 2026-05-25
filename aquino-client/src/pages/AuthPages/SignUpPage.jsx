@@ -22,6 +22,8 @@ const SignUpPage = () => {
     contactNumber: '',
     gender: '',
     age: '',
+    type: 'viewer',
+    isActive: true,
   });
 
   const [error, setError] = useState('');
@@ -35,15 +37,83 @@ const SignUpPage = () => {
     });
   };
 
+  const validate = () => {
+    const {
+      username,
+      firstName,
+      lastName,
+      email,
+      password,
+      address,
+      contactNumber,
+      gender,
+      age,
+    } = formData;
+
+    if (
+      !username.trim() ||
+      !firstName.trim() ||
+      !lastName.trim() ||
+      !email.trim() ||
+      !password.trim() ||
+      !address.trim() ||
+      !contactNumber.trim() ||
+      !gender ||
+      !age
+    ) {
+      return 'Please fill in all required fields.';
+    }
+
+    if (username.includes(' ')) {
+      return 'Username must not contain spaces.';
+    }
+
+    if (password.length < 8) {
+      return 'Password must be at least 8 characters.';
+    }
+
+    if (!/^\d{11}$/.test(contactNumber)) {
+      return 'Contact number must be 11 digits.';
+    }
+
+    if (Number(age) <= 0 || Number(age) > 120) {
+      return 'Please enter a valid age.';
+    }
+
+    return null;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError('');
     setSuccess('');
+
+    const validationError = validate();
+
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      await createUser(formData);
+      const payload = {
+        username: formData.username.trim(),
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
+        address: formData.address.trim(),
+        contactNumber: formData.contactNumber.trim(),
+        gender: formData.gender,
+        age: Number(formData.age),
+        type: 'viewer',
+        isActive: true,
+      };
+
+      await createUser(payload);
 
       setSuccess('Account created successfully!');
 
@@ -78,7 +148,6 @@ const SignUpPage = () => {
       )}
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-
         {/* Username */}
         <div>
           <label className="text-sm font-medium text-zinc-700">
@@ -86,6 +155,7 @@ const SignUpPage = () => {
           </label>
           <input
             name="username"
+            placeholder="Username"
             value={formData.username}
             onChange={handleChange}
             className={inputClasses}
@@ -95,23 +165,72 @@ const SignUpPage = () => {
 
         {/* Name */}
         <div className="grid gap-4 sm:grid-cols-2">
-          <input
-            name="firstName"
-            placeholder="First Name"
-            value={formData.firstName}
-            onChange={handleChange}
-            className={inputClasses}
-            required
-          />
-          <input
-            name="lastName"
-            placeholder="Last Name"
-            value={formData.lastName}
-            onChange={handleChange}
-            className={inputClasses}
-            required
-          />
+          <div>
+            <label className="text-sm font-medium text-zinc-700">
+              First Name
+            </label>
+            <input
+              name="firstName"
+              placeholder="First Name"
+              value={formData.firstName}
+              onChange={handleChange}
+              className={inputClasses}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-zinc-700">
+              Last Name
+            </label>
+            <input
+              name="lastName"
+              placeholder="Last Name"
+              value={formData.lastName}
+              onChange={handleChange}
+              className={inputClasses}
+              required
+            />
+          </div>
         </div>
+
+         {/* Gender + Age */}
+<div className="grid gap-4 sm:grid-cols-2">
+  <div>
+    <label className="text-sm font-medium text-zinc-700">
+      Gender
+    </label>
+
+    <select
+      name="gender"
+      value={formData.gender}
+      onChange={handleChange}
+      className={inputClasses}
+      required
+    >
+      <option value="">Select Gender</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
+
+  <div>
+    <label className="text-sm font-medium text-zinc-700">
+      Age
+    </label>
+
+    <input
+      name="age"
+      type="number"
+      placeholder="Age"
+      value={formData.age}
+      onChange={handleChange}
+      className={inputClasses}
+      required
+    />
+  </div>
+</div>
 
         {/* Email */}
         <input
@@ -155,30 +274,7 @@ const SignUpPage = () => {
           required
         />
 
-        {/* Gender */}
-        <select
-          name="gender"
-          value={formData.gender}
-          onChange={handleChange}
-          className={inputClasses}
-          required
-        >
-          <option value="">Select Gender</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-
-        {/* Age */}
-        <input
-          name="age"
-          type="number"
-          placeholder="Age"
-          value={formData.age}
-          onChange={handleChange}
-          className={inputClasses}
-          required
-        />
+       
 
         <Button
           type="submit"
@@ -188,7 +284,6 @@ const SignUpPage = () => {
         >
           {isLoading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}
         </Button>
-
       </form>
 
       <div className="mt-6 text-sm text-zinc-600">
