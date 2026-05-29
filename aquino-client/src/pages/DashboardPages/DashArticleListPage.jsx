@@ -347,9 +347,19 @@ const DashArticleListPage = () => {
         <Stack direction="row" spacing={1}>
           <Button
             size="small"
-            variant="outlined"
+            variant="contained"
             startIcon={<EditIcon />}
             onClick={() => openModal(row)}
+            sx={{
+              backgroundColor: "rgba(2, 136, 209, 0.12)",
+              color: "#01579b",
+              boxShadow: "none",
+
+              '&:hover': {
+                backgroundColor: "rgba(2, 136, 209, 0.22)",
+                boxShadow: "none",
+              },
+            }}
           >
             Edit
           </Button>
@@ -357,10 +367,31 @@ const DashArticleListPage = () => {
           <Button
             size="small"
             variant="contained"
-            color={row.status === 'enabled' ? 'warning' : 'success'}
             onClick={() => handleToggleStatus(row)}
+            sx={{
+              backgroundColor:
+                row.status === 'enabled'
+                  ? "rgba(46, 125, 50, 0.12)"
+                  : "rgba(117, 117, 117, 0.15)",
+
+              color:
+                row.status === 'enabled'
+                  ? "#1b5e20"
+                  : "#424242",
+
+              boxShadow: "none",
+
+              '&:hover': {
+                backgroundColor:
+                  row.status === 'enabled'
+                    ? "rgba(46, 125, 50, 0.22)"
+                    : "rgba(117, 117, 117, 0.25)",
+
+                boxShadow: "none",
+              },
+            }}
           >
-            {row.status === 'enabled' ? 'Disable' : 'Enable'}
+            {row.status === 'enabled' ? 'Enabled' : 'Disabled'}
           </Button>
 
           <IconButton

@@ -29,6 +29,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 
 const modalStyle = {
@@ -196,6 +197,33 @@ const UsersPage = () => {
       console.error("Error toggling user status:", error);
     }
   };
+
+  const handleDelete = async (id) => {
+  const confirmDelete = window.confirm(
+    "Permanently delete this user?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    await axios.delete(
+      `${getApiUrl()}/users/${id}`,
+      getHeaders()
+    );
+
+    alert("User deleted successfully.");
+
+    loadUsers();
+  } catch (error) {
+    console.error("Error deleting user:", error);
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to delete user."
+    );
+  }
+};
+
 
   const validate = () => {
     const nextErrors = {};
@@ -574,7 +602,28 @@ const UsersPage = () => {
                   <TableCell>{row.email}</TableCell>
 
                   <TableCell>
-                    <Chip label={row.type} />
+                    <Chip
+                      label={row.type}
+                      size="small"
+                      sx={{
+                        textTransform: "capitalize",
+                        fontWeight: 500,
+
+                        backgroundColor:
+                          row.type === "admin"
+                            ? "rgba(211, 47, 47, 0.12)"
+                            : row.type === "editor"
+                            ? "rgba(2, 136, 209, 0.12)"
+                            : "rgba(46, 125, 50, 0.12)",
+
+                        color:
+                          row.type === "admin"
+                            ? "#b71c1c"
+                            : row.type === "editor"
+                            ? "#01579b"
+                            : "#1b5e20",
+                      }}
+                    />
                   </TableCell>
 
                   <TableCell>{row.contactNumber}</TableCell>
@@ -596,20 +645,59 @@ const UsersPage = () => {
                         size="small"
                         startIcon={<EditIcon />}
                         onClick={() => handleEdit(row._id)}
+                        sx={{
+                          backgroundColor: "rgba(2, 136, 209, 0.12)",
+                          color: "#01579b",
+                          boxShadow: "none",
+
+                          '&:hover': {
+                            backgroundColor: "rgba(2, 136, 209, 0.22)",
+                            boxShadow: "none",
+                          },
+                        }}
                       >
                         Edit
                       </Button>
 
-                      <Button
-                        variant="contained"
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={() =>
+                        handleToggleActive(row._id, row.isActive !== false)
+                      }
+                      sx={{
+                        backgroundColor:
+                          row.isActive !== false
+                            ? "rgba(46, 125, 50, 0.12)"
+                            : "rgba(117, 117, 117, 0.15)",
+
+                        color:
+                          row.isActive !== false
+                            ? "#1b5e20"
+                            : "#424242",
+
+                        boxShadow: "none",
+
+                        '&:hover': {
+                          backgroundColor:
+                            row.isActive !== false
+                              ? "rgba(46, 125, 50, 0.22)"
+                              : "rgba(117, 117, 117, 0.25)",
+
+                          boxShadow: "none",
+                        },
+                      }}
+                    >
+                      {row.isActive !== false ? "Active" : "Inactive"}
+                    </Button>
+
+                     <IconButton
+                        color="error"
                         size="small"
-                        color={row.isActive !== false ? "error" : "success"}
-                        onClick={() =>
-                          handleToggleActive(row._id, row.isActive !== false)
-                        }
+                        onClick={() => handleDelete(row._id)}
                       >
-                        {row.isActive !== false ? "Active" : "Inactive"}
-                      </Button>
+                        <DeleteIcon />
+                      </IconButton>
                     </Stack>
                   </TableCell>
                 </TableRow>
