@@ -313,97 +313,116 @@ const DashArticleListPage = () => {
           ? row.paragraphs.length
           : 0,
     },
-    {
-      field: 'preview',
-      headerName: 'Preview',
-      minWidth: 220,
-      flex: 1.5,
-      renderCell: ({ value }) => (
-        <Typography variant="body2" noWrap sx={{ maxWidth: '100%' }}>
-          {value}
-        </Typography>
-      ),
-    },
-    {
-      field: 'status',
-      headerName: 'Status',
-      width: 130,
-      renderCell: ({ row }) => (
-        <Chip
-          label={row.status === 'enabled' ? 'Enabled' : 'Disabled'}
-          color={row.status === 'enabled' ? 'success' : 'default'}
-          variant={row.status === 'enabled' ? 'filled' : 'outlined'}
-          size="small"
-        />
-      ),
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      width: 280,
-      sortable: false,
-      filterable: false,
-      renderCell: ({ row }) => (
-        <Stack direction="row" spacing={1}>
-          <Button
-            size="small"
-            variant="contained"
-            startIcon={<EditIcon />}
-            onClick={() => openModal(row)}
-            sx={{
-              backgroundColor: "rgba(2, 136, 209, 0.12)",
-              color: "#01579b",
-              boxShadow: "none",
+   {
+  field: 'preview',
+  headerName: 'Preview',
+  minWidth: 260,
+  flex: 1.8,
+  renderCell: ({ value }) => (
+    <Typography
+      variant="body2"
+      sx={{
+        py: 1,
+        lineHeight: 1.5,
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        width: '100%',
+      }}
+    >
+      {value}
+    </Typography>
+  ),
+},
 
-              '&:hover': {
-                backgroundColor: "rgba(2, 136, 209, 0.22)",
-                boxShadow: "none",
-              },
-            }}
-          >
-            Edit
-          </Button>
+{
+  field: 'status',
+  headerName: 'Status',
+  width: 130,
+  renderCell: ({ row }) => (
+    <Chip
+      label={row.status === 'enabled' ? 'Enabled' : 'Disabled'}
+      color={row.status === 'enabled' ? 'success' : 'default'}
+      variant={row.status === 'enabled' ? 'filled' : 'outlined'}
+      size="small"
+    />
+  ),
+},
 
-          <Button
-            size="small"
-            variant="contained"
-            onClick={() => handleToggleStatus(row)}
-            sx={{
-              backgroundColor:
-                row.status === 'enabled'
-                  ? "rgba(46, 125, 50, 0.12)"
-                  : "rgba(117, 117, 117, 0.15)",
+{
+  field: 'actions',
+  headerName: 'Actions',
+  width: 320,
+  sortable: false,
+  filterable: false,
+  renderCell: ({ row }) => (
+    <Stack
+      direction="row"
+      spacing={1}
+      sx={{
+        alignItems: 'center',
+        py: 1,
+      }}
+    >
+      <Button
+        size="small"
+        variant="contained"
+        startIcon={<EditIcon />}
+        onClick={() => openModal(row)}
+        sx={{
+          backgroundColor: "rgba(2, 136, 209, 0.12)",
+          color: "#01579b",
+          boxShadow: "none",
 
-              color:
-                row.status === 'enabled'
-                  ? "#1b5e20"
-                  : "#424242",
+          '&:hover': {
+            backgroundColor: "rgba(2, 136, 209, 0.22)",
+            boxShadow: "none",
+          },
+        }}
+      >
+        Edit
+      </Button>
 
-              boxShadow: "none",
+      <Button
+        size="small"
+        variant="contained"
+        onClick={() => handleToggleStatus(row)}
+        sx={{
+          backgroundColor:
+            row.status === 'enabled'
+              ? "rgba(46, 125, 50, 0.12)"
+              : "rgba(117, 117, 117, 0.15)",
 
-              '&:hover': {
-                backgroundColor:
-                  row.status === 'enabled'
-                    ? "rgba(46, 125, 50, 0.22)"
-                    : "rgba(117, 117, 117, 0.25)",
+          color:
+            row.status === 'enabled'
+              ? "#1b5e20"
+              : "#424242",
 
-                boxShadow: "none",
-              },
-            }}
-          >
-            {row.status === 'enabled' ? 'Enabled' : 'Disabled'}
-          </Button>
+          boxShadow: "none",
 
-          <IconButton
-            color="error"
-            size="small"
-            onClick={() => handleDelete(row._id)}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </Stack>
-      ),
-    },
+          '&:hover': {
+            backgroundColor:
+              row.status === 'enabled'
+                ? "rgba(46, 125, 50, 0.22)"
+                : "rgba(117, 117, 117, 0.25)",
+
+            boxShadow: "none",
+          },
+        }}
+      >
+        {row.status === 'enabled' ? 'Enabled' : 'Disabled'}
+      </Button>
+
+      <IconButton
+        color="error"
+        size="small"
+        onClick={() => handleDelete(row._id)}
+      >
+        <DeleteIcon />
+      </IconButton>
+    </Stack>
+  ),
+},
   ];
 
   return (
@@ -508,7 +527,18 @@ const DashArticleListPage = () => {
               }}
               sx={{
                 minWidth: 0,
-                '& .MuiDataGrid-cell, & .MuiDataGrid-columnHeader': {
+
+                '& .MuiDataGrid-cell': {
+                  display: 'flex',
+                  alignItems: 'center',
+                  py: 1,
+                },
+
+                '& .MuiDataGrid-columnHeader': {
+                  outline: 'none',
+                },
+
+                '& .MuiDataGrid-cell:focus, & .MuiDataGrid-columnHeader:focus': {
                   outline: 'none',
                 },
               }}
