@@ -5,7 +5,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 
 const connectDB = require("./config/db");
-const useRoutes = require("./routes/useRoutes");
+const userRoutes = require("./routes/useRoutes");
 const articleRoutes = require("./routes/articleRoutes");
 
 const app = express();
@@ -21,7 +21,7 @@ const corsOptions = {
   ],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
 };
 
 // Middleware
