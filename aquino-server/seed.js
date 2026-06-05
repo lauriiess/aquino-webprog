@@ -1,6 +1,24 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const Article = require("./models/Article");
+const User = require("./models/User");
+
+const users = [
+  {
+    firstName: "Peony",
+    lastName: "Smith",
+    age: "29",
+    gender: "female",
+    contactNumber: "09171234567",
+    email: "peony.smith@aquino.dev",
+    type: "admin",
+    username: "peonysmith",
+    password: "Peony123!",
+    address: "Sampaloc, Manila, Metro Manila",
+    isActive: true,
+  },
+];
 
 const articles = [
   {
@@ -14,7 +32,7 @@ const articles = [
     paragraphs: [
       "Fresh flowers can last much longer when cared for properly. Small habits like trimming stems and changing water regularly help arrangements stay healthy and colorful.",
       "Always cut flower stems at a 45-degree angle before placing them in water. This improves water absorption and keeps blooms hydrated throughout the day.",
-      "Replacing the vase water every two days helps prevent bacteria from growing. Clean water keeps flowers fresher and extends the beauty of your arrangements."
+      "Replacing the vase water every two days helps prevent bacteria from growing. Clean water keeps flowers fresher and extends the beauty of your arrangements.",
     ],
     status: "enabled",
   },
@@ -29,7 +47,7 @@ const articles = [
     paragraphs: [
       "Color plays a major role in floral design because it affects the mood and overall appearance of a bouquet. Choosing the right combinations creates harmony and balance.",
       "Using complementary colors such as yellow and purple can make arrangements look more vibrant and eye-catching. Contrasting shades naturally draw attention.",
-      "Monochromatic floral arrangements use different shades of the same color to create a clean and elegant style that feels modern and sophisticated."
+      "Monochromatic floral arrangements use different shades of the same color to create a clean and elegant style that feels modern and sophisticated.",
     ],
     status: "enabled",
   },
@@ -44,7 +62,7 @@ const articles = [
     paragraphs: [
       "Spring is one of the most colorful seasons for flowers, bringing fresh blooms and vibrant garden landscapes after colder months.",
       "Tulips and daffodils are classic spring flowers known for their bright colors and cheerful appearance. They are popular choices for gardens and bouquets.",
-      "Ranunculus flowers are admired for their layered petals and rose-like shape, making them perfect for elegant floral arrangements and seasonal displays."
+      "Ranunculus flowers are admired for their layered petals and rose-like shape, making them perfect for elegant floral arrangements and seasonal displays.",
     ],
     status: "enabled",
   },
@@ -59,7 +77,7 @@ const articles = [
     paragraphs: [
       "Sustainable flower sourcing focuses on supporting environmentally friendly farming practices while reducing transportation impact and waste.",
       "Partnering with local farms allows flowers to arrive fresher because they travel shorter distances before reaching customers.",
-      "Organic farming practices help protect soil quality, reduce harmful chemicals, and support pollinators like bees and butterflies that are essential for healthy ecosystems."
+      "Organic farming practices help protect soil quality, reduce harmful chemicals, and support pollinators like bees and butterflies that are essential for healthy ecosystems.",
     ],
     status: "enabled",
   },
@@ -70,14 +88,30 @@ const seedDatabase = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("MongoDB Connected");
 
-    // Clear existing articles
+    // Clear existing data
     await Article.deleteMany({});
+    await User.deleteMany({});
+
     console.log("Cleared existing articles");
+    console.log("Cleared existing users");
 
-    // Insert new articles
-    const result = await Article.insertMany(articles);
-    console.log(`${result.length} articles seeded successfully`);
+    // Hash passwords
+    const usersWithHashedPasswords = await Promise.all(
+      users.map(async (user) => ({
+        ...user,
+        password: await bcrypt.hash(user.password, 10),
+      }))
+    );
 
+    // Insert users
+    const userResult = await User.insertMany(usersWithHashedPasswords);
+    console.log(`${userResult.length} users seeded successfully`);
+
+    // Insert articles
+    const articleResult = await Article.insertMany(articles);
+    console.log(`${articleResult.length} articles seeded successfully`);
+
+    console.log("Database seeded successfully");
     process.exit(0);
   } catch (error) {
     console.error("Error seeding database:", error);
