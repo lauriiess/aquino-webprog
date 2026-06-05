@@ -22,7 +22,9 @@ app.use(cors());
 
 // vercel options
 const corsOptions = {
-    origin: "*", // Allow all origins
+    origin: [
+        'https://aquino-client.vercel.app',
+    ], // Allow all origins
     credentials: true, // Allow credentials
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
