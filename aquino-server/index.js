@@ -5,51 +5,64 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 
 const connectDB = require("./config/db");
-const userRoutes = require("./routes/useRoutes");
+const userRoutes = require("./routes/userRoutes");
 const articleRoutes = require("./routes/articleRoutes");
 
 const app = express();
 
-// Database Connection
 connectDB();
 
-// CORS options
 const corsOptions = {
-  origin: [
-    "http://localhost:5173",
-    "https://aquino-client.vercel.app",
-  ],
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (
+      origin.startsWith("http://localhost:") ||
+      origin.endsWith(".vercel.app")
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error("Blocked by CORS policy"));
+    }
+  },
   credentials: true,
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Origin",
+    "Accept",
+  ],
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
+  optionsSuccessStatus: 204,
 };
 
-// Middleware
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
+
 app.use(express.json());
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Test route
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
 
-// Routes
 app.use("/api/users", userRoutes);
 app.use("/api/articles", articleRoutes);
 
-// Error Handling
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: "Server Error" });
+  console.error("SERVER ERROR LOG:", err.stack);
+
+  res.status(500).json({
+    error: "Internal Server Error",
+    message: err.message || "Something went wrong on the server.",
+  });
 });
 
-// For local development only
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 8000;
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
-// For Vercel
 module.exports = app;
