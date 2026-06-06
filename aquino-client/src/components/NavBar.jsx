@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import logoImg from '../assets/logo.png';
 
 const links = [
   { label: 'Home', to: '/' },
@@ -23,7 +24,7 @@ const NavBar = () => {
           <NavLink to="/" className="relative flex items-center gap-3">
             <div className="relative flex h-10 w-12 items-center justify-center">
               <img 
-                src="/src/assets/logo.png" 
+                src={logoImg} 
                 alt="Logo" 
                 className="absolute left-0 top-1/2 h-16 w-auto -translate-y-1/2 max-w-none" 
               />

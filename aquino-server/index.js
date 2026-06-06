@@ -49,7 +49,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Root Route
 app.get("/", (req, res) => {
-  res.send("Server is running perfectly.");
+  res.send("Server is running.");
 });
 
 // API Routes
@@ -65,7 +65,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Only listen on a port if running LOCALLY. Vercel handles the ports in production.
+// Only listen on a port if running LOCALLY. 
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 8000;
   app.listen(PORT, () => console.log(`Server running locally on port ${PORT}`));
