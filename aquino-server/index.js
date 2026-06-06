@@ -10,10 +10,13 @@ const articleRoutes = require("./routes/articleRoutes");
 
 const app = express();
 
+// Initialize Database
 connectDB();
 
+// Dynamic CORS Configuration
 const corsOptions = {
   origin: function (origin, callback) {
+    // Allow requests with no origin 
     if (!origin) return callback(null, true);
 
     if (
@@ -44,25 +47,28 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Root Route
 app.get("/", (req, res) => {
-  res.send("Server is running");
+  res.send("Server is running perfectly.");
 });
 
+// API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/articles", articleRoutes);
 
+// Global Error Handler
 app.use((err, req, res, next) => {
   console.error("SERVER ERROR LOG:", err.stack);
-
   res.status(500).json({
     error: "Internal Server Error",
     message: err.message || "Something went wrong on the server.",
   });
 });
 
+// Only listen on a port if running LOCALLY. Vercel handles the ports in production.
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 8000;
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  app.listen(PORT, () => console.log(`Server running locally on port ${PORT}`));
 }
 
 module.exports = app;
