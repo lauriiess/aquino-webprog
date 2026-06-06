@@ -1,55 +1,35 @@
 require("dotenv").config();
 
 const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-
 const connectDB = require("./config/db");
-const userRoutes = require("./routes/useRoutes");
+
+const userRoutes = require("./routes/userRoutes");
 const articleRoutes = require("./routes/articleRoutes");
 
 const app = express();
 
-// Database Connection
 connectDB();
 
-// CORS options
-const corsOptions = {
-  origin: [
-    "http://localhost:5173",
-    "https://aquino-client.vercel.app",
-  ],
-  credentials: true,
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
-};
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-// Middleware
-app.use(cors(corsOptions));
-app.options(/.*/, cors(corsOptions));
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
 
-// Test route
-app.get("/", (req, res) => {
-  res.send("Server is running");
+  next();
 });
 
-// Routes
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.get("/", (req, res) => {
+  res.status(200).send("Backend API is running");
+});
+
 app.use("/api/users", userRoutes);
 app.use("/api/articles", articleRoutes);
 
-// Error Handling
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: "Server Error" });
-});
-
-// For local development only
-if (process.env.NODE_ENV !== "production") {
-  const PORT = process.env.PORT || 8000;
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-}
-
-// For Vercel
 module.exports = app;

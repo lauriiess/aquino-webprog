@@ -6,15 +6,15 @@ const User = require("./models/User");
 
 const users = [
   {
-    firstName: "Peony",
-    lastName: "Smith",
-    age: "29",
+    firstName: "Admin",
+    lastName: "Admin",
+    age: "23",
     gender: "female",
-    contactNumber: "09171234567",
-    email: "peony.smith@aquino.dev",
+    contactNumber: "09567842153",
+    email: "admin@aquino.dev",
     type: "admin",
-    username: "peonysmith",
-    password: "Peony123!",
+    username: "admin",
+    password: "Admin123!",
     address: "Sampaloc, Manila, Metro Manila",
     isActive: true,
   },
